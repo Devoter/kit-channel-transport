@@ -35,6 +35,11 @@ func NewManager(bufSize int) *Manager {
 	}
 }
 
+// Bus returns internal bus instance.
+func (m *Manager) Bus() *Bus {
+	return m.bus
+}
+
 // Listen starts a channels listeners.
 func (m *Manager) Listen() {
 	handlersCount := len(m.handlers)
