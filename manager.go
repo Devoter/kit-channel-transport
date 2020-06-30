@@ -1,8 +1,6 @@
 package channel
 
-import (
-	"sync"
-)
+import "sync"
 
 // Handler is a combination of a HandlerFunc and events channel.
 type Handler struct {

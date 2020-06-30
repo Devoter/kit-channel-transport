@@ -1,16 +1,12 @@
 package channel
 
-import (
-	"context"
-
-	"github.com/go-kit/kit/endpoint"
-)
+import "context"
 
 // DeliverFunc is a function that is used to publish events to a Bus instance.
 type DeliverFunc func(ctx context.Context, bus *Bus, key string, msg *Message, ch chan ResponseEvent) (interface{}, error)
 
 // MakeClientEndpoint returns a client endpoint which associated with a key.
-func MakeClientEndpoint(bus *Bus, key string, deliver DeliverFunc) endpoint.Endpoint {
+func MakeClientEndpoint(bus *Bus, key string, deliver DeliverFunc) Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		ch := make(chan ResponseEvent)
 		msg := Message{Body: request}

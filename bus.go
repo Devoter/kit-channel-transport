@@ -1,8 +1,6 @@
 package channel
 
-import (
-	"sync"
-)
+import "sync"
 
 // Message is a structure which contains a request or response body.
 type Message struct {
