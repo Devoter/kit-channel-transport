@@ -7,7 +7,7 @@ import (
 )
 
 // DeliverFunc is a function that is used to publish events to a Bus instance.
-type DeliverFunc func(context.Context, *Bus, string, *Message, chan ResponseEvent) (interface{}, error)
+type DeliverFunc func(ctx context.Context, bus *Bus, key string, msg *Message, ch chan ResponseEvent) (interface{}, error)
 
 // MakeClientEndpoint returns a client endpoint which associated with a key.
 func MakeClientEndpoint(bus *Bus, key string, deliver DeliverFunc) endpoint.Endpoint {
@@ -25,12 +25,12 @@ func MakeClientEndpoint(bus *Bus, key string, deliver DeliverFunc) endpoint.Endp
 }
 
 // SyncDeliver is a delivery function that publishes a request and awaits a response.
-func SyncDeliver(ctx context.Context, bus *Bus, key string, msg *Message, channel chan ResponseEvent) (interface{}, error) {
-	bus.Publish(key, msg.Body, channel)
+func SyncDeliver(ctx context.Context, bus *Bus, key string, msg *Message, ch chan ResponseEvent) (interface{}, error) {
+	bus.Publish(key, msg.Body, ch)
 
 	for {
 		select {
-		case resp := <-channel:
+		case resp := <-ch:
 			return &resp.Body, resp.Err
 		case <-ctx.Done():
 			return nil, ctx.Err()
@@ -39,7 +39,7 @@ func SyncDeliver(ctx context.Context, bus *Bus, key string, msg *Message, channe
 }
 
 // AsyncDeliver is a delivery function that only publishes a request and doesn't wait for a response.
-func AsyncDeliver(ctx context.Context, bus *Bus, key string, msg *Message) (interface{}, error) {
+func AsyncDeliver(ctx context.Context, bus *Bus, key string, msg *Message, _ chan ResponseEvent) (interface{}, error) {
 	bus.Publish(key, msg.Body, nil)
 
 	return nil, nil
