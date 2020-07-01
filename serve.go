@@ -12,6 +12,11 @@ func MakeHandlerFunc(e Endpoint) HandlerFunc {
 		defer cancel()
 
 		response, err := e(ctx, event.Body)
+
+		if event.ResponseChan == nil {
+			return
+		}
+
 		if err != nil {
 			event.ResponseChan <- ResponseEvent{Err: err}
 			return
